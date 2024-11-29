@@ -4,7 +4,7 @@ use std::io::prelude::*;
 use std::mem::ManuallyDrop;
 
 use crate::utils::non_ascii_char;
-pub struct ReadDelimiter {
+pub struct ReadUTF {
     pub _filename: String,
     file: ManuallyDrop<File>,
     file_drop: bool,
@@ -12,23 +12,23 @@ pub struct ReadDelimiter {
     pub line: String,
     buffer: Vec<u8>,
     // save_buffer is used if there is an error while parsing non-ascii chars
-    //          -> the size should be 0 or 1, it an error otherwise
     save_buffer: VecDeque<u8>,
     index_buffer: usize,
     curr_index: usize,
 }
 /*
-    ReadDelimiter:
+    ReadUTF:
         - Goal: Create a structure to read a file delim by delim (like line by line)
 */
-impl ReadDelimiter {
+
+impl ReadUTF {
     pub fn new(
         path: String,
         delimiter: Vec<String>,
         buffer_size: usize,
-    ) -> Result<ReadDelimiter, std::io::Error> {
+    ) -> Result<ReadUTF, std::io::Error> {
         let file = File::open(&path)?;
-        Ok(ReadDelimiter {
+        Ok(ReadUTF {
             _filename: path.clone(),
             file: ManuallyDrop::new(file),
             file_drop: false,
@@ -42,7 +42,7 @@ impl ReadDelimiter {
     }
 
     /// Read all bytes from the delims, and return the numbers of bytes read
-    pub fn read(&mut self, print_invalid_char: bool) -> Result<bool, std::io::Error> {
+    pub fn read_delim(&mut self, print_invalid_char: bool) -> Result<bool, std::io::Error> {
         if self.file_drop {
             if print_invalid_char {
                 eprintln!("Unable to read the file, because it is closed");
@@ -87,6 +87,34 @@ impl ReadDelimiter {
         Ok(self.line.len() != 0)
     }
 
+    pub fn read_char(&mut self, print_invalid_char: bool) -> Result<bool, std::io::Error> {
+        if self.file_drop {
+            if print_invalid_char {
+                eprintln!("Unable to read the file, because it is closed");
+            }
+            return Ok(false);
+        }
+        self.line = "".to_string();
+        let mut buffer: u8 = 0;
+
+        match read_from_buffer(self, &mut buffer, print_invalid_char) {
+            Ok(bytes_read) => {
+                if bytes_read == 0 {
+                    return Ok(false);
+                }
+
+                if non_ascii_char::check_non_ascii(buffer) {
+                    let _ = read_non_ascii_char(self, buffer, print_invalid_char);
+                } else {
+                    self.line += &(buffer as char).to_string();
+                }
+            }
+            _ => return Ok(false),
+        };
+
+        Ok(self.line.len() != 0)
+    }
+
     pub fn close(&mut self) {
         if !self.file_drop {
             return;
@@ -98,7 +126,7 @@ impl ReadDelimiter {
 }
 
 fn read_from_buffer(
-    read_delim: &mut ReadDelimiter,
+    read_delim: &mut ReadUTF,
     c: &mut u8,
     print_invalid_char: bool,
 ) -> Result<usize, std::io::Error> {
@@ -135,7 +163,7 @@ fn read_from_buffer(
 }
 
 fn read_non_ascii_char(
-    read_delim: &mut ReadDelimiter,
+    read_delim: &mut ReadUTF,
     first_u8: u8,
     print_invalid_char: bool,
 ) -> Result<(), std::io::Error> {
@@ -156,10 +184,7 @@ fn read_non_ascii_char(
             Err(e) => {
                 return Err(std::io::Error::new(
                     std::io::ErrorKind::Other,
-                    format!(
-                        "[ReadDelimiter][read_non_ascii_char]: Error reading file: {}",
-                        e
-                    ),
+                    format!("[ReadUTF][read_non_ascii_char]: Error reading file: {}", e),
                 ));
             }
         };

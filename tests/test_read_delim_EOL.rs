@@ -1,4 +1,4 @@
-use read_delims::read_delims::ReadDelimiter;
+use read_delims::read_utf::ReadUTF;
 use read_delims::utils::tests_utils::{cmp_vector, convert_string_to_list};
 use std::process::Command;
 
@@ -31,11 +31,11 @@ mod tests_read_eol {
         let ref_: Vec<String> = convert_string_to_list(ref_str);
         let mut delim: Vec<String> = Vec::new();
         delim.push(String::from("\n"));
-        let mut read: ReadDelimiter = ReadDelimiter::new(PATH.to_string(), delim, 1024)
-            .expect("Unable to init ReadDelimiter");
+        let mut read: ReadUTF =
+            ReadUTF::new(PATH.to_string(), delim, 1024).expect("Unable to init ReadUTF");
 
         let mut res: Vec<String> = Vec::new();
-        while read.read(false).expect("Unable to read delimiter") != true {
+        while read.read_delim(false).expect("Unable to read delimiter") != true {
             res.push(read.line.to_string());
         }
         cmp_vector(res, ref_);

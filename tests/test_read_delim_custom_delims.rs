@@ -1,4 +1,4 @@
-use read_delims::read_delims::ReadDelimiter;
+use read_delims::read_utf::ReadUTF;
 use read_delims::utils::tests_utils::{cmp_vector, convert_string_to_list, get_custom_delims};
 use std::process::Command;
 
@@ -34,12 +34,12 @@ mod tests_read_custom_delim {
 
         let ref_: Vec<String> = convert_string_to_list(ref_str);
 
-        let mut read: ReadDelimiter =
-            ReadDelimiter::new(PATH_CUSTOM_DELIM.to_string(), get_custom_delims(), 1024)
-                .expect("Unable to init ReadDelimiter");
+        let mut read: ReadUTF =
+            ReadUTF::new(PATH_CUSTOM_DELIM.to_string(), get_custom_delims(), 1024)
+                .expect("Unable to init ReadUTF");
 
         let mut res: Vec<String> = Vec::new();
-        while read.read(false).expect("Unable to read delimiter") != true {
+        while read.read_delim(false).expect("Unable to read delimiter") != true {
             res.push(read.line.to_string());
         }
         cmp_vector(res, ref_);
@@ -67,17 +67,17 @@ mod tests_read_custom_delim {
 
         let ref_: Vec<String> = convert_string_to_list(ref_str);
 
-        let mut read: ReadDelimiter = ReadDelimiter::new(
+        let mut read: ReadUTF = ReadUTF::new(
             PATH_CUSTOM_DELIM_ERROR.to_string(),
             get_custom_delims(),
             1024,
         )
-        .expect("Unable to init ReadDelimiter");
+        .expect("Unable to init ReadUTF");
 
         let mut res: Vec<String> = Vec::new();
         let limit: usize = 1000;
         let mut index: usize = 0;
-        while read.read(false).expect("Unable to read delimiter") == true && index < limit {
+        while read.read_delim(false).expect("Unable to read delimiter") == true && index < limit {
             index += 1;
             res.push(read.line.to_string());
         }
