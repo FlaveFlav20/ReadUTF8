@@ -24,7 +24,6 @@ pub fn check_non_ascii(c: u8) -> bool {
 
 pub fn check_number_bytes_begin(c: u8) -> usize {
     if (c & CHECK_NON_ASCII) != 0 && (!c & SECOND_CHECK_NON_ASCII) != 0 {
-        println!("Mé non bahahah {:#b}", c);
         return 1;
     } else if c & CHECK_LEN_2 != 0 && (!c & SECOND_CHECK_LEN_2) != 0 {
         return 2;

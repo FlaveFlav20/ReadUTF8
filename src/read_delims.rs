@@ -1,7 +1,7 @@
+use std::collections::VecDeque;
 use std::fs::File;
 use std::io::prelude::*;
 use std::mem::ManuallyDrop;
-use std::collections::VecDeque;
 
 use crate::utils::non_ascii_char;
 pub struct ReadDelimiter {
@@ -42,21 +42,23 @@ impl ReadDelimiter {
     }
 
     /// Read all bytes from the delims, and return the numbers of bytes read
-    pub fn read(&mut self) -> Result<bool, std::io::Error> {
+    pub fn read(&mut self, print_invalid_char: bool) -> Result<bool, std::io::Error> {
         if self.file_drop {
-            eprintln!("Unable to read the file, because it is closed");
+            if print_invalid_char {
+                eprintln!("Unable to read the file, because it is closed");
+            }
             return Ok(false);
         }
         self.line = "".to_string();
         let mut buffer: u8 = 0;
 
-        while let Ok(bytes_read) = read_from_buffer(self, &mut buffer) {
+        while let Ok(bytes_read) = read_from_buffer(self, &mut buffer, print_invalid_char) {
             if bytes_read == 0 {
                 break;
             }
 
             if non_ascii_char::check_non_ascii(buffer) {
-                let _ = read_non_ascii_char(self, buffer);
+                let _ = read_non_ascii_char(self, buffer, print_invalid_char);
             } else {
                 self.line += &(buffer as char).to_string();
             }
@@ -95,7 +97,11 @@ impl ReadDelimiter {
     }
 }
 
-fn read_from_buffer(read_delim: &mut ReadDelimiter, c: &mut u8) -> Result<usize, std::io::Error> {
+fn read_from_buffer(
+    read_delim: &mut ReadDelimiter,
+    c: &mut u8,
+    print_invalid_char: bool,
+) -> Result<usize, std::io::Error> {
     if read_delim.save_buffer.len() != 0 {
         match read_delim.save_buffer.pop_front() {
             Some(value) => {
@@ -104,7 +110,9 @@ fn read_from_buffer(read_delim: &mut ReadDelimiter, c: &mut u8) -> Result<usize,
             }
             _ => {
                 *c = 0;
-                eprint!("Error when read buffer");
+                if print_invalid_char {
+                    eprint!("Error when read buffer");
+                }
                 return Ok(0 as usize);
             }
         }
@@ -126,24 +134,24 @@ fn read_from_buffer(read_delim: &mut ReadDelimiter, c: &mut u8) -> Result<usize,
     return Ok(1 as usize);
 }
 
-fn read_non_ascii_char(read_delim: &mut ReadDelimiter, first_u8: u8) -> Result<(), std::io::Error> {
+fn read_non_ascii_char(
+    read_delim: &mut ReadDelimiter,
+    first_u8: u8,
+    print_invalid_char: bool,
+) -> Result<(), std::io::Error> {
     let size: usize = non_ascii_char::check_number_bytes_begin(first_u8);
-    
-    if size <= 0 {
+
+    if size <= 0 && print_invalid_char {
         read_delim.line.push('�');
         eprintln!("Not a valid character!");
         return Ok(());
     }
 
-    println!("{}", first_u8 as char);
-
     let mut chars: Vec<u8> = Vec::new();
-    let mut chars_to_save: Vec<u8> = Vec::new();
     chars.push(first_u8);
     let mut buffer: u8 = 0;
-    let mut check_error: bool = false;
     for _ in 1..size {
-        let bytes_read = match read_from_buffer(read_delim, &mut buffer) {
+        let bytes_read = match read_from_buffer(read_delim, &mut buffer, print_invalid_char) {
             Ok(bytes_read) => bytes_read,
             Err(e) => {
                 return Err(std::io::Error::new(
@@ -162,48 +170,19 @@ fn read_non_ascii_char(read_delim: &mut ReadDelimiter, first_u8: u8) -> Result<(
                 "Unexpected EOF while reading multi-byte character",
             ));
         }
-        if !non_ascii_char::check_ascii_follow(buffer) && !non_ascii_char::check_non_ascii(buffer) {
-            check_error = true;
-            if chars.len() != 0 {
-                for _ in 1..chars.len() {
-                    read_delim.save_buffer.push_back('�' as u8);
-                }
-                chars = Vec::new();
-            }
-            for _ in chars_to_save {
-                read_delim.save_buffer.push_back('�' as u8);
-            }
-            chars_to_save = Vec::new();
-            read_delim.save_buffer.push_back(buffer);
-            continue;
-        }
-        else if !non_ascii_char::check_ascii_follow(buffer) {
-            check_error = true;
-        }
-        if check_error {
-            chars_to_save.push(buffer);
-        }
-        else {
-            chars.push(buffer);
-        }
+        chars.push(buffer);
     }
-    if check_error {
-        read_delim.line.push('�' as char);
-        for _ in 1..chars.len() {
-            read_delim.save_buffer.push_back('�' as u8);
-        }
-        for _ in 0..chars_to_save.len() {
-            read_delim.save_buffer.push_back('�' as u8);
-        }   
-        read_delim.line.push('�');
-        println!("Bahahah");
-    }
-    else if let Ok(valid_str) = std::str::from_utf8(&chars) {
+
+    if let Ok(valid_str) = std::str::from_utf8(&chars) {
         read_delim.line.push_str(valid_str);
-        println!("Valid: {}", valid_str);
     } else {
+        for i in 1..size {
+            read_delim.save_buffer.push_back(chars[i]);
+        }
         read_delim.line.push('�');
-        println!("Bou {}", size);
+        if print_invalid_char {
+            eprintln!("Unable to get char?");
+        }
     }
     Ok(())
 }

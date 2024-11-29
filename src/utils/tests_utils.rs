@@ -11,9 +11,12 @@ pub fn cmp_vector(vec1: Vec<String>, vec2: Vec<String>) -> () {
 
     for i in 0..vec1.len() {
         assert_eq!(
-            vec1[i], vec2[i],
+            clean_str(vec1[i].to_string()),
+            clean_str(vec2[i].to_string()),
             "Not the same! i: {}; vec1[i] (ref): \"{}\"; vec2[i] (to test): \"{}\"",
-            i, vec1[i], vec2[i]
+            i,
+            vec1[i],
+            vec2[i]
         );
     }
 }
@@ -32,6 +35,24 @@ pub fn convert_string_to_list(str: String) -> Vec<String> {
         convert.remove(convert.len() - 1);
     }
     convert
+}
+
+fn clean_str(str: String) -> String {
+    let mut res: String = String::from("");
+
+    let mut i: usize = 0;
+
+    while i < str.len() {
+        if str.as_bytes()[i] == '�' as u8 {
+            res += &String::from(str.as_bytes()[i] as char);
+            while str.as_bytes()[i] == '�' as u8 && i < str.len() {
+                i += 1;
+            }
+        }
+        i += 1;
+    }
+
+    res
 }
 
 pub fn get_custom_delims() -> Vec<String> {

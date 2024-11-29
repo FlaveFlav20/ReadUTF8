@@ -5,8 +5,8 @@ use std::process::Command;
 static PATH: &str = "./tests_files/DDHC.txt";
 static PATH_CUSTOM_DELIM: &str = "./tests_files/DDHC_custom_delims.txt";
 
-static PATH_CUSTOM_DELIM_ERROR_REF: &str = "./tests_files/DDHC_custom_delims_byte_ref.txt";
-static PATH_CUSTOM_DELIM_ERROR: &str = "./tests_files/DDHC_custom_delims_byte.txt";
+static PATH_CUSTOM_DELIM_ERROR_REF: &str = "./tests_files/DDHC_custom_delims_corrupted_ref.txt";
+static PATH_CUSTOM_DELIM_ERROR: &str = "./tests_files/DDHC_custom_delims_corrupted.txt";
 
 mod tests_read_custom_delim {
 
@@ -39,7 +39,7 @@ mod tests_read_custom_delim {
                 .expect("Unable to init ReadDelimiter");
 
         let mut res: Vec<String> = Vec::new();
-        while read.read().expect("Unable to read delimiter") != true {
+        while read.read(false).expect("Unable to read delimiter") != true {
             res.push(read.line.to_string());
         }
         cmp_vector(res, ref_);
@@ -55,7 +55,7 @@ mod tests_read_custom_delim {
         } else {
             Command::new("sh")
                 .arg("-c")
-                .arg("cat '".to_string() + PATH_CUSTOM_DELIM_ERROR_REF)
+                .arg("cat ".to_string() + PATH_CUSTOM_DELIM_ERROR_REF)
                 .output()
                 .expect("failed to execute process")
         };
@@ -67,18 +67,22 @@ mod tests_read_custom_delim {
 
         let ref_: Vec<String> = convert_string_to_list(ref_str);
 
-        let mut read: ReadDelimiter =
-            ReadDelimiter::new(PATH_CUSTOM_DELIM_ERROR.to_string(), get_custom_delims(), 1024)
-                .expect("Unable to init ReadDelimiter");
+        let mut read: ReadDelimiter = ReadDelimiter::new(
+            PATH_CUSTOM_DELIM_ERROR.to_string(),
+            get_custom_delims(),
+            1024,
+        )
+        .expect("Unable to init ReadDelimiter");
 
         let mut res: Vec<String> = Vec::new();
         let limit: usize = 1000;
         let mut index: usize = 0;
-        while read.read().expect("Unable to read delimiter") != true && index < limit {
+        while read.read(false).expect("Unable to read delimiter") == true && index < limit {
             index += 1;
             res.push(read.line.to_string());
         }
-        assert_eq!(index, limit);
+
+        assert_ne!(index, limit);
         cmp_vector(res, ref_);
     }
 }

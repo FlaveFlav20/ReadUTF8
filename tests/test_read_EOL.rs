@@ -35,7 +35,7 @@ mod tests_read_eol {
             .expect("Unable to init ReadDelimiter");
 
         let mut res: Vec<String> = Vec::new();
-        while read.read().expect("Unable to read delimiter") != true {
+        while read.read(false).expect("Unable to read delimiter") != true {
             res.push(read.line.to_string());
         }
         cmp_vector(res, ref_);
