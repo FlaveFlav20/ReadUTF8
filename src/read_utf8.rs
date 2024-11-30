@@ -1,14 +1,26 @@
+//! # read_utf8
+//!
+//! `read_utf8` is a collection of utilities to read a file delimiter by 
+//! delimiter, or character by character
+
 use std::collections::VecDeque;
 use std::fs::File;
 use std::io::prelude::*;
 use std::mem::ManuallyDrop;
 
 use crate::utils::non_ascii_char;
+
+///
+/// The structure that allows to read the file.
+/// 
 pub struct ReadUTF8 {
+    #[doc = r"The path to the file."]
     pub _filename: String,
     file: ManuallyDrop<File>,
     file_drop: bool,
+    #[doc = r" The list of delimiters."]
     pub delimiter: Vec<String>,
+    #[doc = r"The line where the output is."]
     pub line: String,
     buffer: Vec<u8>,
     // save_buffer is used if there is an error while parsing non-ascii chars
@@ -17,26 +29,23 @@ pub struct ReadUTF8 {
     curr_index: usize,
     print_invalid_char: bool,
 }
-/*
-    ReadUTF8:
-        - Goal: Create a structure to read a file delim by delim (like line by line)
-*/
+
+///
+/// [ReadUTF8]: Goal:
+/// - Create a structure to read a file delim by delim (like line by line)
+///
 
 impl ReadUTF8 {
     ///
-    /// path => mandatory
-    /// delimiter/print_invalid_char/buffer_size are optionnal => you must pass
-    ///  the argument with Some(your arg) or you can put None
-    ///
-    /// path => path to the file to read
-    /// delimiter => a list of String that are delimiters
-    /// print_invalid_char => if true, it prints an error when invalid char on
-    ///                         stderr
-    /// buffer_size => by default, it's 1024.
-    ///             => The maximum buffer size when reading file, for example,
-    ///                 when reading char by char, it will not read char by
-    ///                 char, it will read an entire buffer, and give the char
-    ///                 from the buffer
+    /// [ReadUTF8]\[new\] All arguments: 
+    /// - path: (mandatory) path to the file to read
+    /// - delimiter: (optional) a list of String that are delimiters
+    /// - print_invalid_char: (optional) if true, it prints an error when 
+    /// invalid char on stderr
+    /// - buffer_size: (optional)[default 1024] The maximum buffer size when 
+    /// reading file, for example, when reading char by char, it will not read 
+    /// char by char, it will read an entire buffer, and give the char from the
+    ///  buffer
     ///
     pub fn new(
         path: String,
@@ -72,13 +81,13 @@ impl ReadUTF8 {
 }
 
 impl ReadUTF8 {
+
     ///
-    /// A method to get the line
-    /// return:
-    ///     - true if the line is valid
-    ///     - false otherwise
+    /// [ReadUTF8]\[read_delim\] A method to get the line which return:
+    /// - true if the line is valid
+    /// - false otherwise \
     /// The line is located in "self.line" attribute
-    ///
+    /// 
     pub fn read_delim(&mut self) -> Result<bool, std::io::Error> {
         if self.file_drop {
             if self.print_invalid_char {
@@ -125,12 +134,12 @@ impl ReadUTF8 {
     }
 
     ///
-    /// A method to get the line
-    /// return:
-    ///     - true if the line is valid
-    ///     - false otherwise
+    /// [ReadUTF8]\[read_char\] A method to get the line which return
+    /// - true if the line is valid
+    /// - false otherwise \
     /// The character is located in "self.line" attribute
-    ///
+    /// 
+    
     pub fn read_char(&mut self) -> Result<bool, std::io::Error> {
         if self.file_drop {
             if self.print_invalid_char {
@@ -159,6 +168,10 @@ impl ReadUTF8 {
         Ok(self.line.len() != 0)
     }
 
+    ///
+    /// [ReadUTF8]\[close\]: a method to manually close the file \
+    /// It's important to call it if you use the ReadUTF8 structure!!!
+    /// 
     pub fn close(&mut self) {
         if !self.file_drop {
             return;

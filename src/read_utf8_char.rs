@@ -1,14 +1,27 @@
+//! # read_utf8_chars
+//!
+//! `read_utf8_chars` is a collection of utilities to read a file character by 
+//! character
+
 use core::panic;
 
 use crate::read_utf8::ReadUTF8;
 
+///
+/// [ReadUTF8Char]: The structure to read all chaacters of a file. \
+/// You can iterate throught this structure with 
+/// my_ReadUTF8Char.into_iter()
+/// 
 pub struct ReadUTF8Char {
+    #[doc = r" The [ReadUTF8] structure"]
     pub read_utf: ReadUTF8,
 }
 
 impl ReadUTF8Char {
     ///
-    /// For arguments => See ReadUTF8
+    /// For arguments => See [ReadUTF8] \
+    /// With this struct, you needn't to close the file if you iterate throught
+    /// all elements 
     ///
     pub fn new(
         path: String,
