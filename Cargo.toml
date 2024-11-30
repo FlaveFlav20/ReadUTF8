@@ -2,6 +2,13 @@
 name = "read_utf8"
 version = "0.1.0"
 edition = "2021"
+license-file = "LICENSE"
+readme = "README.md"
+repository = "https://github.com/FlaveFlav20/ReadUTF8"
+description = "The ReadUTF8 crate allows to easily read a file with efficiency. It allows to read all UTF-8 files encoded, by giving the content between delimiters, or by giving the content character by character."
+keywords = ["read", "readline", "readchar", "utf8", "utf-8"]
+categories = ["filesystem"]
+exclude = ["tests_files/DDHC_custom_delims.txt", "tests_files/", "tests_files/DDHC_custom_delims_corrupted.txt", "DDHC_custom_delims_corrupted_ref.txt"]
 
 [lib]
 name = "read_utf8"
