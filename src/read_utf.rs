@@ -29,26 +29,28 @@ impl ReadUTF {
         print_invalid_char: Option<bool>,
         buffer_size: Option<usize>,
     ) -> Result<ReadUTF, std::io::Error> {
-
         Ok(ReadUTF {
             _filename: path.clone(),
             file: ManuallyDrop::new(File::open(&path)?),
             file_drop: false,
             delimiter: match delimiter {
                 None => Vec::new(),
-                Some(delim) => delim
+                Some(delim) => delim,
             },
             line: "".to_string(),
-            buffer: vec![0; match buffer_size {
-                None => 1024,
-                Some(size) => size
-            }],
+            buffer: vec![
+                0;
+                match buffer_size {
+                    None => 1024,
+                    Some(size) => size,
+                }
+            ],
             save_buffer: VecDeque::new(),
             index_buffer: 0,
             curr_index: 0,
             print_invalid_char: match print_invalid_char {
                 None => false,
-                Some(b) => b
+                Some(b) => b,
             },
         })
     }
@@ -162,11 +164,11 @@ impl ReadUTF {
                 Ok(bytes_read) => bytes_read,
                 Err(_e) => panic!("[ReadDeliiter][read_from_buffer]: Error while reading file"),
             };
-    
+
             if bytes_read == 0 {
                 return Ok(0);
             }
-    
+
             self.curr_index = 0;
             self.index_buffer = bytes_read;
         }
@@ -174,20 +176,20 @@ impl ReadUTF {
         self.curr_index += 1;
         return Ok(1 as usize);
     }
-    
+
     fn read_non_ascii_char(
         &mut self,
         first_u8: u8,
         print_invalid_char: bool,
     ) -> Result<(), std::io::Error> {
         let size: usize = non_ascii_char::check_number_bytes_begin(first_u8);
-    
+
         if size <= 0 && print_invalid_char {
             self.line.push('�');
             eprintln!("Not a valid character!");
             return Ok(());
         }
-    
+
         let mut chars: Vec<u8> = Vec::new();
         chars.push(first_u8);
         let mut buffer: u8 = 0;
@@ -201,7 +203,7 @@ impl ReadUTF {
                     ));
                 }
             };
-    
+
             if bytes_read == 0 {
                 return Err(std::io::Error::new(
                     std::io::ErrorKind::UnexpectedEof,
@@ -210,7 +212,7 @@ impl ReadUTF {
             }
             chars.push(buffer);
         }
-    
+
         if let Ok(valid_str) = std::str::from_utf8(&chars) {
             self.line.push_str(valid_str);
         } else {

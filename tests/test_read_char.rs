@@ -1,10 +1,9 @@
-use read_utf::read_utf_delims::ReadUTFDelims;
-use read_utf::utils::tests_utils::{cmp_vector, convert_string_to_list};
+use read_utf::read_utf_char::ReadUTFChar;
 use std::process::Command;
 
 static PATH: &str = "./tests_files/DDHC.txt";
 
-mod tests_read_eol {
+mod tests_read_char {
 
     use super::*;
 
@@ -16,7 +15,7 @@ mod tests_read_eol {
                 .output()
                 .expect("failed to execute process")
         } else {
-            Command::new("bash")
+            Command::new("sh")
                 .arg("-c")
                 .arg("cat ".to_string() + PATH)
                 .output()
@@ -27,13 +26,17 @@ mod tests_read_eol {
             Ok(string) => string,
             Err(_e) => panic!("Error convertion"),
         };
+        let char_vec: Vec<char> = ref_str.chars().collect();
 
-        let ref_: Vec<String> = convert_string_to_list(ref_str);
-        let mut delim: Vec<String> = Vec::new();
-        delim.push(String::from("\n"));
-        let read: ReadUTFDelims = ReadUTFDelims::new(PATH.to_string(), delim, None, None)
-            .expect("Unable to init ReadUTF");
-        let res: Vec<String> = read.into_iter().collect();
-        cmp_vector(ref_, res);
+        let read: ReadUTFChar =
+            ReadUTFChar::new(PATH.to_string(), None, None).expect("Unable to read ReadUTFChar");
+        let mut len: usize = 0;
+
+        for c in read.into_iter() {
+            len += 1;
+            assert_eq!(String::from(char_vec[len - 1]), c);
+        }
+
+        assert_eq!(char_vec.len(), len);
     }
 }

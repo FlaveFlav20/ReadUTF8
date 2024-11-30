@@ -12,15 +12,14 @@ impl ReadUTFChar {
         print_invalid_char: Option<bool>,
         buffer_size: Option<usize>,
     ) -> Result<ReadUTFChar, std::io::Error> {
-
         let read = match ReadUTF::new(path, None, print_invalid_char, buffer_size) {
             Ok(res) => res,
-            _ => {panic!("Unable to create ReadUTFChar")}
+            _ => {
+                panic!("Unable to create ReadUTFChar")
+            }
         };
 
-        Ok(ReadUTFChar {
-            read_utf: read,
-        })
+        Ok(ReadUTFChar { read_utf: read })
     }
 }
 
@@ -33,7 +32,7 @@ impl Iterator for ReadUTFChar {
                 if b {
                     return Some(self.read_utf.line.to_string());
                 }
-            },
+            }
             _ => {}
         }
         self.read_utf.close();

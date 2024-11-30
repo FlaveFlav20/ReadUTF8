@@ -3,7 +3,6 @@ use read_utf::utils::tests_utils::{cmp_vector, convert_string_to_list, get_custo
 use std::process::Command;
 
 static PATH: &str = "./tests_files/DDHC.txt";
-static PATH_CUSTOM_DELIM: &str = "./tests_files/DDHC_custom_delims.txt";
 
 static PATH_CUSTOM_DELIM_ERROR_REF: &str = "./tests_files/DDHC_custom_delims_corrupted_ref.txt";
 static PATH_CUSTOM_DELIM_ERROR: &str = "./tests_files/DDHC_custom_delims_corrupted.txt";
@@ -33,13 +32,13 @@ mod tests_read_custom_delim {
         };
 
         let ref_: Vec<String> = convert_string_to_list(ref_str);
-
-        /*let read: ReadUTF =
-            ReadUTF::new(PATH_CUSTOM_DELIM.to_string(), Some(get_custom_delims()), None, None, None)
-                .expect("Unable to init ReadUTF");*/
-
-        let read: ReadUTFDelims = ReadUTFDelims::new(PATH_CUSTOM_DELIM_ERROR.to_string(), get_custom_delims(), None, None).expect("Unable to init ReadUTFDelim");
-
+        let read: ReadUTFDelims = ReadUTFDelims::new(
+            PATH_CUSTOM_DELIM_ERROR.to_string(),
+            get_custom_delims(),
+            None,
+            None,
+        )
+        .expect("Unable to init ReadUTFDelim");
         let res: Vec<String> = read.into_iter().collect();
 
         cmp_vector(ref_, res);
@@ -66,20 +65,14 @@ mod tests_read_custom_delim {
         };
 
         let ref_: Vec<String> = convert_string_to_list(ref_str);
-
-        /*let read: ReadUTF = ReadUTF::new(
+        let read: ReadUTFDelims = ReadUTFDelims::new(
             PATH_CUSTOM_DELIM_ERROR.to_string(),
-            Some(get_custom_delims()),
-            None,
+            get_custom_delims(),
             None,
             None,
         )
-        .expect("Unable to init ReadUTF");*/
-
-        let read: ReadUTFDelims = ReadUTFDelims::new(PATH_CUSTOM_DELIM_ERROR.to_string(), get_custom_delims(), None, None).expect("Unable to init ReadUTFDelim");;
-
+        .expect("Unable to init ReadUTFDelim");
         let res: Vec<String> = read.into_iter().collect();
-
         cmp_vector(ref_, res);
     }
 }
