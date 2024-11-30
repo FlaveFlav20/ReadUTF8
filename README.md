@@ -1,9 +1,9 @@
-# read_utf
+# ReadUTF8
 
 ## Intro
 
-This library allow you to read a file character by character/delims by delims with utf-8 compliant. \
-It's also dealing with errors, by printing on stderr and placing a �
+This library allows you to read a file character by character/delims by delims with utf-8 compliant. \
+It's also dealing with errors, by printing to stderr and placing a �
 
 ## Example
 
@@ -108,14 +108,14 @@ impl ReadUTF8 {
     ///
     /// path => mandatory
     /// delimiter/print_invalid_char/buffer_size are optionnal => you must pass
-    ///  the argument with Some(your arg) or you can put None
+    ///  the argument with Some(your arg), or you can put None
     /// 
     /// path => path to the file to read
     /// delimiter => a list of String that are delimiters
     /// print_invalid_char => if true, it prints an error when invalid char on 
     ///                         stderr
     /// buffer_size => by default, it's 1024.
-    ///             => The maximum buffer size when reading file, for example, 
+    ///             => The maximum buffer size when reading files, for example,
     ///                 when reading char by char, it will not read char by 
     ///                 char, it will read an entire buffer, and give the char
     ///                 from the buffer
