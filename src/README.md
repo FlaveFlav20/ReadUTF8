@@ -12,7 +12,7 @@ There are some utils like:
 - **utils/tests_utils.rs**: just for test => take a look at **src/tests/README.md**
 
 - **read_utf8.rs**:
-    - **struct ReadUTF8**: it will be used to read our file byte by byte or delim(s) by delim(s)
+    - **struct ReadUTF8**: it will be used to read our files byte by byte or delim(s) by delim(s)
     - It is the main structure, the others structures **ReadUTF8Delims**/**ReadUTF8&Char** is just calling it
 
 - **read_utf8_delims.rs**

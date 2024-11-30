@@ -29,7 +29,7 @@ mod tests_read_char {
         let char_vec: Vec<char> = ref_str.chars().collect();
 
         let read: ReadUTF8Char =
-        ReadUTF8Char::new(PATH.to_string(), None, None).expect("Unable to read ReadUTFChar");
+            ReadUTF8Char::new(PATH.to_string(), None, None).expect("Unable to read ReadUTFChar");
         let mut len: usize = 0;
 
         for c in read.into_iter() {

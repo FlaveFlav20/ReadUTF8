@@ -9,13 +9,8 @@ fn main() {
     let path: &str = "./tests_files/DDHC.txt";
     let mut delims: Vec<String> = Vec::new();
     delims.push(String::from("\n"));
-    let mut read: ReadUTF8 = ReadUTF8::new(
-            path.to_string(),
-            Some(delims),
-            None,
-            None,
-        )
-        .expect("Unable to init ReadUTF");
+    let mut read: ReadUTF8 =
+        ReadUTF8::new(path.to_string(), Some(delims), None, None).expect("Unable to init ReadUTF");
 
     let mut res: Vec<String> = Vec::new();
 

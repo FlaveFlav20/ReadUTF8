@@ -27,17 +27,17 @@ impl ReadUTF8 {
     /// path => mandatory
     /// delimiter/print_invalid_char/buffer_size are optionnal => you must pass
     ///  the argument with Some(your arg) or you can put None
-    /// 
+    ///
     /// path => path to the file to read
     /// delimiter => a list of String that are delimiters
-    /// print_invalid_char => if true, it prints an error when invalid char on 
+    /// print_invalid_char => if true, it prints an error when invalid char on
     ///                         stderr
     /// buffer_size => by default, it's 1024.
-    ///             => The maximum buffer size when reading file, for example, 
-    ///                 when reading char by char, it will not read char by 
+    ///             => The maximum buffer size when reading file, for example,
+    ///                 when reading char by char, it will not read char by
     ///                 char, it will read an entire buffer, and give the char
     ///                 from the buffer
-    /// 
+    ///
     pub fn new(
         path: String,
         delimiter: Option<Vec<String>>,
@@ -72,13 +72,13 @@ impl ReadUTF8 {
 }
 
 impl ReadUTF8 {
-    /// 
+    ///
     /// A method to get the line
     /// return:
     ///     - true if the line is valid
     ///     - false otherwise
     /// The line is located in "self.line" attribute
-    /// 
+    ///
     pub fn read_delim(&mut self) -> Result<bool, std::io::Error> {
         if self.file_drop {
             if self.print_invalid_char {
@@ -124,13 +124,13 @@ impl ReadUTF8 {
         Ok(self.line.len() != 0)
     }
 
-    /// 
+    ///
     /// A method to get the line
     /// return:
     ///     - true if the line is valid
     ///     - false otherwise
     /// The character is located in "self.line" attribute
-    /// 
+    ///
     pub fn read_char(&mut self) -> Result<bool, std::io::Error> {
         if self.file_drop {
             if self.print_invalid_char {
