@@ -1,5 +1,5 @@
-use read_delims::read_utf::ReadUTF;
-use read_delims::utils::tests_utils::{cmp_vector, convert_string_to_list, get_custom_delims};
+use read_utf::read_utf_delims::ReadUTFDelims;
+use read_utf::utils::tests_utils::{cmp_vector, convert_string_to_list, get_custom_delims};
 use std::process::Command;
 
 static PATH: &str = "./tests_files/DDHC.txt";
@@ -22,7 +22,7 @@ mod tests_read_custom_delim {
         } else {
             Command::new("sh")
                 .arg("-c")
-                .arg("cat '".to_string() + PATH)
+                .arg("cat ".to_string() + PATH)
                 .output()
                 .expect("failed to execute process")
         };
@@ -34,15 +34,15 @@ mod tests_read_custom_delim {
 
         let ref_: Vec<String> = convert_string_to_list(ref_str);
 
-        let mut read: ReadUTF =
-            ReadUTF::new(PATH_CUSTOM_DELIM.to_string(), get_custom_delims(), 1024)
-                .expect("Unable to init ReadUTF");
+        /*let read: ReadUTF =
+            ReadUTF::new(PATH_CUSTOM_DELIM.to_string(), Some(get_custom_delims()), None, None, None)
+                .expect("Unable to init ReadUTF");*/
 
-        let mut res: Vec<String> = Vec::new();
-        while read.read_delim(false).expect("Unable to read delimiter") != true {
-            res.push(read.line.to_string());
-        }
-        cmp_vector(res, ref_);
+        let read: ReadUTFDelims = ReadUTFDelims::new(PATH_CUSTOM_DELIM_ERROR.to_string(), get_custom_delims(), None, None).expect("Unable to init ReadUTFDelim");
+
+        let res: Vec<String> = read.into_iter().collect();
+
+        cmp_vector(ref_, res);
     }
 
     #[test]
@@ -67,22 +67,19 @@ mod tests_read_custom_delim {
 
         let ref_: Vec<String> = convert_string_to_list(ref_str);
 
-        let mut read: ReadUTF = ReadUTF::new(
+        /*let read: ReadUTF = ReadUTF::new(
             PATH_CUSTOM_DELIM_ERROR.to_string(),
-            get_custom_delims(),
-            1024,
+            Some(get_custom_delims()),
+            None,
+            None,
+            None,
         )
-        .expect("Unable to init ReadUTF");
+        .expect("Unable to init ReadUTF");*/
 
-        let mut res: Vec<String> = Vec::new();
-        let limit: usize = 1000;
-        let mut index: usize = 0;
-        while read.read_delim(false).expect("Unable to read delimiter") == true && index < limit {
-            index += 1;
-            res.push(read.line.to_string());
-        }
+        let read: ReadUTFDelims = ReadUTFDelims::new(PATH_CUSTOM_DELIM_ERROR.to_string(), get_custom_delims(), None, None).expect("Unable to init ReadUTFDelim");;
 
-        assert_ne!(index, limit);
-        cmp_vector(res, ref_);
+        let res: Vec<String> = read.into_iter().collect();
+
+        cmp_vector(ref_, res);
     }
 }

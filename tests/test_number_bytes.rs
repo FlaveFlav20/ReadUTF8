@@ -1,4 +1,4 @@
-use read_delims::utils::non_ascii_char;
+use read_utf::utils::non_ascii_char;
 
 mod tests_number_bytes_non_ascii_char {
     use super::*;
