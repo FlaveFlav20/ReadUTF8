@@ -9,6 +9,7 @@ description = "The ReadUTF8 crate allows to easily read a file with efficiency. 
 keywords = ["read", "readline", "readchar", "utf8", "utf-8"]
 categories = ["filesystem"]
 exclude = ["tests_files/DDHC_custom_delims.txt", "tests_files/", "tests_files/DDHC_custom_delims_corrupted.txt", "DDHC_custom_delims_corrupted_ref.txt"]
+
 [lib]
 name = "read_utf8"
 crate-type = ["rlib"]

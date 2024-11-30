@@ -9,7 +9,7 @@ pub struct ReadUTF8Delims {
 impl ReadUTF8Delims {
     ///
     /// For arguments => See ReadUTF8
-    /// 
+    ///
     pub fn new(
         path: String,
         delimiter: Vec<String>,

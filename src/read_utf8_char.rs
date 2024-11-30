@@ -7,6 +7,9 @@ pub struct ReadUTF8Char {
 }
 
 impl ReadUTF8Char {
+    ///
+    /// For arguments => See ReadUTF8
+    ///
     pub fn new(
         path: String,
         print_invalid_char: Option<bool>,
