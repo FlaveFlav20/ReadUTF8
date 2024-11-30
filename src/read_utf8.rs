@@ -4,7 +4,7 @@ use std::io::prelude::*;
 use std::mem::ManuallyDrop;
 
 use crate::utils::non_ascii_char;
-pub struct ReadUTF {
+pub struct ReadUTF8 {
     pub _filename: String,
     file: ManuallyDrop<File>,
     file_drop: bool,
@@ -18,18 +18,33 @@ pub struct ReadUTF {
     print_invalid_char: bool,
 }
 /*
-    ReadUTF:
+    ReadUTF8:
         - Goal: Create a structure to read a file delim by delim (like line by line)
 */
 
-impl ReadUTF {
+impl ReadUTF8 {
+    ///
+    /// path => mandatory
+    /// delimiter/print_invalid_char/buffer_size are optionnal => you must pass
+    ///  the argument with Some(your arg) or you can put None
+    /// 
+    /// path => path to the file to read
+    /// delimiter => a list of String that are delimiters
+    /// print_invalid_char => if true, it prints an error when invalid char on 
+    ///                         stderr
+    /// buffer_size => by default, it's 1024.
+    ///             => The maximum buffer size when reading file, for example, 
+    ///                 when reading char by char, it will not read char by 
+    ///                 char, it will read an entire buffer, and give the char
+    ///                 from the buffer
+    /// 
     pub fn new(
         path: String,
         delimiter: Option<Vec<String>>,
         print_invalid_char: Option<bool>,
         buffer_size: Option<usize>,
-    ) -> Result<ReadUTF, std::io::Error> {
-        Ok(ReadUTF {
+    ) -> Result<ReadUTF8, std::io::Error> {
+        Ok(ReadUTF8 {
             _filename: path.clone(),
             file: ManuallyDrop::new(File::open(&path)?),
             file_drop: false,
@@ -56,8 +71,14 @@ impl ReadUTF {
     }
 }
 
-impl ReadUTF {
-    /// Read all bytes from the delims, and return the numbers of bytes read
+impl ReadUTF8 {
+    /// 
+    /// A method to get the line
+    /// return:
+    ///     - true if the line is valid
+    ///     - false otherwise
+    /// The line is located in "self.line" attribute
+    /// 
     pub fn read_delim(&mut self) -> Result<bool, std::io::Error> {
         if self.file_drop {
             if self.print_invalid_char {
@@ -103,6 +124,13 @@ impl ReadUTF {
         Ok(self.line.len() != 0)
     }
 
+    /// 
+    /// A method to get the line
+    /// return:
+    ///     - true if the line is valid
+    ///     - false otherwise
+    /// The character is located in "self.line" attribute
+    /// 
     pub fn read_char(&mut self) -> Result<bool, std::io::Error> {
         if self.file_drop {
             if self.print_invalid_char {
@@ -199,7 +227,7 @@ impl ReadUTF {
                 Err(e) => {
                     return Err(std::io::Error::new(
                         std::io::ErrorKind::Other,
-                        format!("[ReadUTF][read_non_ascii_char]: Error reading file: {}", e),
+                        format!("[ReadUTF8][read_non_ascii_char]: Error reading file: {}", e),
                     ));
                 }
             };

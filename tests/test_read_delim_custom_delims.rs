@@ -1,5 +1,5 @@
-use read_utf::read_utf_delims::ReadUTFDelims;
-use read_utf::utils::tests_utils::{cmp_vector, convert_string_to_list, get_custom_delims};
+use read_utf8::read_utf8_delims::ReadUTF8Delims;
+use read_utf8::utils::tests_utils::{cmp_vector, convert_string_to_list, get_custom_delims};
 use std::process::Command;
 
 static PATH: &str = "./tests_files/DDHC.txt";
@@ -32,7 +32,7 @@ mod tests_read_custom_delim {
         };
 
         let ref_: Vec<String> = convert_string_to_list(ref_str);
-        let read: ReadUTFDelims = ReadUTFDelims::new(
+        let read: ReadUTF8Delims = ReadUTF8Delims::new(
             PATH_CUSTOM_DELIM_ERROR.to_string(),
             get_custom_delims(),
             None,
@@ -65,7 +65,7 @@ mod tests_read_custom_delim {
         };
 
         let ref_: Vec<String> = convert_string_to_list(ref_str);
-        let read: ReadUTFDelims = ReadUTFDelims::new(
+        let read: ReadUTF8Delims = ReadUTF8Delims::new(
             PATH_CUSTOM_DELIM_ERROR.to_string(),
             get_custom_delims(),
             None,

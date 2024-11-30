@@ -1,5 +1,5 @@
-use read_utf::read_utf_delims::ReadUTFDelims;
-use read_utf::utils::tests_utils::{cmp_vector, convert_string_to_list};
+use read_utf8::read_utf8_delims::ReadUTF8Delims;
+use read_utf8::utils::tests_utils::{cmp_vector, convert_string_to_list};
 use std::process::Command;
 
 static PATH: &str = "./tests_files/DDHC.txt";
@@ -31,7 +31,7 @@ mod tests_read_eol {
         let ref_: Vec<String> = convert_string_to_list(ref_str);
         let mut delim: Vec<String> = Vec::new();
         delim.push(String::from("\n"));
-        let read: ReadUTFDelims = ReadUTFDelims::new(PATH.to_string(), delim, None, None)
+        let read: ReadUTF8Delims = ReadUTF8Delims::new(PATH.to_string(), delim, None, None)
             .expect("Unable to init ReadUTF");
         let res: Vec<String> = read.into_iter().collect();
         cmp_vector(ref_, res);

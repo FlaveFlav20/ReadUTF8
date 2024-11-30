@@ -1,4 +1,4 @@
-pub mod read_utf;
-pub mod read_utf_char;
-pub mod read_utf_delims;
+pub mod read_utf8;
+pub mod read_utf8_char;
+pub mod read_utf8_delims;
 pub mod utils;

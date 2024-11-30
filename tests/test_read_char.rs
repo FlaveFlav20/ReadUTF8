@@ -1,4 +1,4 @@
-use read_utf::read_utf_char::ReadUTFChar;
+use read_utf8::read_utf8_char::ReadUTF8Char;
 use std::process::Command;
 
 static PATH: &str = "./tests_files/DDHC.txt";
@@ -28,8 +28,8 @@ mod tests_read_char {
         };
         let char_vec: Vec<char> = ref_str.chars().collect();
 
-        let read: ReadUTFChar =
-            ReadUTFChar::new(PATH.to_string(), None, None).expect("Unable to read ReadUTFChar");
+        let read: ReadUTF8Char =
+        ReadUTF8Char::new(PATH.to_string(), None, None).expect("Unable to read ReadUTFChar");
         let mut len: usize = 0;
 
         for c in read.into_iter() {

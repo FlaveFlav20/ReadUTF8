@@ -1,29 +1,29 @@
 use core::panic;
 
-use crate::read_utf::ReadUTF;
+use crate::read_utf8::ReadUTF8;
 
-pub struct ReadUTFChar {
-    pub read_utf: ReadUTF,
+pub struct ReadUTF8Char {
+    pub read_utf: ReadUTF8,
 }
 
-impl ReadUTFChar {
+impl ReadUTF8Char {
     pub fn new(
         path: String,
         print_invalid_char: Option<bool>,
         buffer_size: Option<usize>,
-    ) -> Result<ReadUTFChar, std::io::Error> {
-        let read = match ReadUTF::new(path, None, print_invalid_char, buffer_size) {
+    ) -> Result<ReadUTF8Char, std::io::Error> {
+        let read = match ReadUTF8::new(path, None, print_invalid_char, buffer_size) {
             Ok(res) => res,
             _ => {
-                panic!("Unable to create ReadUTFChar")
+                panic!("Unable to create ReadUTF8Char")
             }
         };
 
-        Ok(ReadUTFChar { read_utf: read })
+        Ok(ReadUTF8Char { read_utf: read })
     }
 }
 
-impl Iterator for ReadUTFChar {
+impl Iterator for ReadUTF8Char {
     type Item = String;
 
     fn next(&mut self) -> Option<Self::Item> {

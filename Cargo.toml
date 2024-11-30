@@ -1,10 +1,10 @@
 [package]
-name = "read_utf"
+name = "read_utf8"
 version = "0.1.0"
 edition = "2021"
 
 [lib]
-name = "read_utf"
+name = "read_utf8"
 crate-type = ["rlib"]
 
 [dependencies]
