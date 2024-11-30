@@ -10,7 +10,7 @@ use core::panic;
 use crate::read_utf8::ReadUTF8;
 
 ///
-/// [ReadUTF8Char]: The structure to read all file delimiters by delimiters. \
+/// [ReadUTF8Delims]: The structure to read all file delimiters by delimiters. \
 /// You can iterate throught this structure with 
 /// my_ReadUTF8Delims.into_iter()
 ///
